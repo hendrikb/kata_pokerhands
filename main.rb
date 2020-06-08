@@ -167,9 +167,8 @@ class PokerHand
   end
 end
 
-# HAND = "KS 2H 5C JD TD"
-MY_HAND    = '3C 4C 5C 6C 7C'
-THEIR_HAND = 'TC JC QC KC AC'
+MY_HAND    = '7C 7H 7D 7S 8C'
+THEIR_HAND = '2C 3C 4C 5C 6C'
 
 ph = PokerHand.new(MY_HAND)
 puts ph.compare_with(THEIR_HAND)
