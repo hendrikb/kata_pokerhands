@@ -64,11 +64,11 @@ class PokerHand
 
   ## Helper methods identifying special suits ##
 
-  def has_flush
+  def flush
     my_hand.group_by(&:suit).select { |_, hand_of_suit| hand_of_suit.count == 5 }
   end
 
-  def has_straight
+  def straight
     sequence = [my_hand.first]
     my_hand.each do |card|
       next if card == sequence.first
@@ -84,12 +84,12 @@ class PokerHand
     sequence
   end
 
-  def self.has_of_a_kind(hand, number)
+  def self.of_a_kind(hand, number)
     hand.group_by(&:value).select { |_, many_of_a_kind| many_of_a_kind.count == number }.values
   end
 
-  def has_of_a_kind(number)
-    PokerHand.has_of_a_kind(my_hand, number)
+  def of_a_kind(number)
+    PokerHand.of_a_kind(my_hand, number)
   end
 
   ## booleans figuring out each named suit
@@ -100,19 +100,19 @@ class PokerHand
   end
 
   def is_straightflush?
-    has_straight.map(&:suit).uniq.count == 1
+    straight.map(&:suit).uniq.count == 1
   end
 
   def is_fourofakind?
-    !has_of_a_kind(4).empty?
+    !of_a_kind(4).empty?
   end
 
-  def has_threeofakind
-    has_of_a_kind(3).flatten
+  def threeofakind
+    of_a_kind(3).flatten
   end
 
-  def has_fullhouse
-    threeofakind = has_threeofakind
+  def fullhouse
+    threeofakind = threeofakind
     remaining_cards = my_hand - threeofakind
     return my_hand if remaining_cards.map(&:value).uniq.count == 1
 
@@ -120,43 +120,43 @@ class PokerHand
   end
 
   def is_fullhouse?
-    has_fullhouse.any?
+    fullhouse.any?
   end
 
   def is_flush?
-    has_flush.any?
+    flush.any?
   end
 
   def is_straight?
-    has_straight.any?
+    straight.any?
   end
 
   def is_threeofakind?
-    has_threeofakind.any?
+    threeofakind.any?
   end
 
-  def has_twopairs
+  def twopairs
     if is_pair?
-      higher_pair = has_pair
-      lower_pair = PokerHand.has_of_a_kind(my_hand - higher_pair, 2).flatten
+      higher_pair = pair
+      lower_pair = PokerHand.of_a_kind(my_hand - higher_pair, 2).flatten
       return higher_pair + lower_pair if lower_pair.any?
     end
     []
   end
 
   def is_twopairs?
-    has_twopairs.any?
+    twopairs.any?
   end
 
-  def has_pair
-    pair = has_of_a_kind(2)
+  def pair
+    pair = of_a_kind(2)
     return pair.first unless pair.empty?
 
     []
   end
 
   def is_pair?
-    has_pair.any?
+    pair.any?
   end
 
   def identify_suit
