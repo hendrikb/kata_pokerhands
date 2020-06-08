@@ -94,16 +94,16 @@ class PokerHand
 
   ## booleans figuring out each named suit
 
-  def is_royalflush?
+  def royalflush?
     highest_cards = my_hand.select { |card| card.value >= PokerCard::TEN }
     highest_cards.count == 5 && highest_cards.map(&:suit).uniq.count == 1
   end
 
-  def is_straightflush?
+  def straightflush?
     straight.map(&:suit).uniq.count == 1
   end
 
-  def is_fourofakind?
+  def fourofakind?
     !of_a_kind(4).empty?
   end
 
@@ -119,24 +119,24 @@ class PokerHand
     []
   end
 
-  def is_fullhouse?
+  def fullhouse?
     fullhouse.any?
   end
 
-  def is_flush?
+  def flush?
     flush.any?
   end
 
-  def is_straight?
+  def straight?
     straight.any?
   end
 
-  def is_threeofakind?
+  def threeofakind?
     threeofakind.any?
   end
 
   def twopairs
-    if is_pair?
+    if pair?
       higher_pair = pair
       lower_pair = PokerHand.of_a_kind(my_hand - higher_pair, 2).flatten
       return higher_pair + lower_pair if lower_pair.any?
@@ -144,7 +144,7 @@ class PokerHand
     []
   end
 
-  def is_twopairs?
+  def twopairs?
     twopairs.any?
   end
 
@@ -155,20 +155,20 @@ class PokerHand
     []
   end
 
-  def is_pair?
+  def pair?
     pair.any?
   end
 
   def identify_suit
-    return :royalflush if is_royalflush?
-    return :straightflush if is_straightflush?
-    return :fourofakind if is_fourofakind?
-    return :fullhouse if is_fullhouse?
-    return :flush if is_flush?
-    return :straight if is_straight?
-    return :threeofakind if is_threeofakind?
-    return :twopairs if is_twopairs?
-    return :pair if is_pair?
+    return :royalflush if royalflush?
+    return :straightflush if straightflush?
+    return :fourofakind if fourofakind?
+    return :fullhouse if fullhouse?
+    return :flush if flush?
+    return :straight if straight?
+    return :threeofakind if threeofakind?
+    return :twopairs if twopairs?
+    return :pair if pair?
 
     :highcard
   end
