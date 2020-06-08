@@ -95,12 +95,11 @@ class PokerHand
   ## booleans figuring showing a named hand is there
 
   def royalflush?
-    highest_cards = my_hand.select { |card| card.value >= PokerCard::TEN }
-    highest_cards.count == 5 && highest_cards.map(&:suit).uniq.count == 1
+    straight? && flush? && my_hand.last.value == PokerCard::TEN
   end
 
   def straightflush?
-    straight.map(&:suit).uniq.count == 1
+    straight? && flush?
   end
 
   def fourofakind?
@@ -112,7 +111,6 @@ class PokerHand
   end
 
   def fullhouse
-    threeofakind = threeofakind
     remaining_cards = my_hand - threeofakind
     return my_hand if remaining_cards.map(&:value).uniq.count == 1
 
