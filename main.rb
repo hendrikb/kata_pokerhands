@@ -39,7 +39,7 @@ class PokerCard
 end
 
 class PokerHand
-  SUIT_RANK = %i[highcard pair twopairs threeofakind straight flush fullhouse fourofakind straightflush royalflush].freeze
+  RANK = %i[highcard pair twopairs threeofakind straight flush fullhouse fourofakind straightflush royalflush].freeze
 
   def initialize(my_hand_string)
     @my_hand = representation_of(my_hand_string)
@@ -48,9 +48,9 @@ class PokerHand
 
   def compare_with(other_hand_string)
     other_hand = PokerHand.new(other_hand_string)
-    my_highest = SUIT_RANK.find_index(highest)
+    my_highest = RANK.find_index(highest)
     puts "My #{highest} vs. Their #{other_hand.highest}"
-    their_highest = SUIT_RANK.find_index(other_hand.highest)
+    their_highest = RANK.find_index(other_hand.highest)
     return 'Loss' if my_highest < their_highest
     return 'Tie' if  my_highest == their_highest
     return 'Win' if  my_highest > their_highest
