@@ -186,6 +186,8 @@ class PokerHand
   end
 end
 
+# Execute my Game here:
+
 MY_HAND    = '7C 7H 7D 7S 8C'
 THEIR_HAND = '2C 3C 4C 5C 6C'
 
