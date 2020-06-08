@@ -28,6 +28,9 @@ class PokerCard
     @value = value
     @suit = suit
   end
+  def ==(o)
+    o.class == self.class && o.value == value && o.suit == suit
+  end
 end
 
 
