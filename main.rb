@@ -160,7 +160,8 @@ class PokerHand
 end
 
 # HAND = "KS 2H 5C JD TD"
-HAND = "KH KS 9C 9D 9H"
+MY_HAND    = '3C 4C 5C 6C 7C'
+THEIR_HAND = 'TC JC QC KC AC'
 
-ph = PokerHand.new(HAND)
-puts ph.compare_with("KS 2H 5C JD TD")
+ph = PokerHand.new(MY_HAND)
+puts ph.compare_with(THEIR_HAND)
