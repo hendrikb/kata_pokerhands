@@ -35,9 +35,10 @@ end
 
 
 class PokerHand
-  attr_reader :my_hand
+  attr_reader :my_hand, :highest
   def initialize(my_hand_string)
     @my_hand = representation_of(my_hand_string)
+    @highest = identify_suit
   end
 
   ## Helper methods identifying special suits ##
@@ -120,6 +121,8 @@ class PokerHand
     has_pair.any?
   end
 
+  SUIT_RANK = [:highcard, :pair, :twopairs, :threeofakind, :straight, :flush, :fullhouse, :fourofakind, :straightflush, :royalflush]
+
   def identify_suit
     return :royalflush if is_royalflush?
     return :straightflush if is_straightflush?
@@ -135,8 +138,11 @@ class PokerHand
 
   def compare_with(other_hand_string)
     other_hand = PokerHand.new(other_hand_string)
-    return "Tie" if other_hand == @my_hand
-    return identify_suit
+    my_highest = SUIT_RANK.find_index(self.highest)
+    their_highest = SUIT_RANK.find_index(other_hand.highest)
+    return "Loss" if my_highest < their_highest
+    return "Tie" if  my_highest == their_highest
+    return "Win" if  my_highest > their_highest
   end
 
   private
