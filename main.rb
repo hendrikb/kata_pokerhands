@@ -186,8 +186,9 @@ end
 
 # Execute my Game here:
 
-MY_HAND    = '7C 7H 7D 7S 8C'
-THEIR_HAND = '2C 3C 4C 5C 6C'
+# MY_HAND    = '7C 7H 7D 7S 8C'
+MY_HAND    = 'TC JC QC KC AC'
+THEIR_HAND = '2C 2D 2H 6C 5D'
 
 ph = PokerHand.new(MY_HAND)
 puts ph.compare_with(THEIR_HAND)
