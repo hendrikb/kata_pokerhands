@@ -62,7 +62,7 @@ class PokerHand
 
   private
 
-  ## Helper methods identifying special suits ##
+  ## Helper methods identifying named hands ##
 
   def flush
     my_hand.group_by(&:suit).select { |_, hand_of_suit| hand_of_suit.count == 5 }
@@ -92,7 +92,7 @@ class PokerHand
     PokerHand.of_a_kind(my_hand, number)
   end
 
-  ## booleans figuring out each named suit
+  ## booleans figuring showing a named hand is there
 
   def royalflush?
     highest_cards = my_hand.select { |card| card.value >= PokerCard::TEN }
