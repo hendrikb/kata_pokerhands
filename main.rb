@@ -11,6 +11,16 @@ class PokerCard
 
   attr_reader :value, :suit
 
+  def initialize(value, suit)
+    @value = value
+    @suit = suit
+  end
+  def ==(o)
+    o.class == self.class && o.value == value && o.suit == suit
+  end
+
+
+  private
   def self.map_suit_from(character)
     CARD_SUIT_MAPPING[character.to_sym]
   end
@@ -23,23 +33,33 @@ class PokerCard
     return character.to_i if (2..9).include?(character.to_i)
     raise "Determining card value from character #{character} failed!"
   end
-
-  def initialize(value, suit)
-    @value = value
-    @suit = suit
-  end
-  def ==(o)
-    o.class == self.class && o.value == value && o.suit == suit
-  end
 end
 
 
 class PokerHand
-  attr_reader :my_hand, :highest
+  SUIT_RANK = [:highcard, :pair, :twopairs, :threeofakind, :straight, :flush, :fullhouse, :fourofakind, :straightflush, :royalflush]
+
   def initialize(my_hand_string)
     @my_hand = representation_of(my_hand_string)
     @highest = identify_suit
   end
+
+  def compare_with(other_hand_string)
+    other_hand = PokerHand.new(other_hand_string)
+    my_highest = SUIT_RANK.find_index(self.highest)
+    puts "My #{self.highest} vs. Their #{other_hand.highest}"
+    their_highest = SUIT_RANK.find_index(other_hand.highest)
+    return "Loss" if my_highest < their_highest
+    return "Tie" if  my_highest == their_highest
+    return "Win" if  my_highest > their_highest
+  end
+
+
+  protected
+
+  attr_reader :my_hand, :highest
+
+  private
 
   ## Helper methods identifying special suits ##
 
@@ -121,8 +141,6 @@ class PokerHand
     has_pair.any?
   end
 
-  SUIT_RANK = [:highcard, :pair, :twopairs, :threeofakind, :straight, :flush, :fullhouse, :fourofakind, :straightflush, :royalflush]
-
   def identify_suit
     return :royalflush if is_royalflush?
     return :straightflush if is_straightflush?
@@ -136,16 +154,6 @@ class PokerHand
     return :highcard
   end
 
-  def compare_with(other_hand_string)
-    other_hand = PokerHand.new(other_hand_string)
-    my_highest = SUIT_RANK.find_index(self.highest)
-    their_highest = SUIT_RANK.find_index(other_hand.highest)
-    return "Loss" if my_highest < their_highest
-    return "Tie" if  my_highest == their_highest
-    return "Win" if  my_highest > their_highest
-  end
-
-  private
   def representation_of(hand_string)
     hand_string.split(" ").map do |cardcode|
       begin
