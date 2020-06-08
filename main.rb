@@ -18,8 +18,8 @@ class PokerCard
     @suit = suit
   end
 
-  def ==(o)
-    o.class == self.class && o.value == value && o.suit == suit
+  def ==(other)
+    other.class == self.class && other.value == value && other.suit == suit
   end
 
   def self.map_suit_from(character)
