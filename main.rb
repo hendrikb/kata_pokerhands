@@ -60,9 +60,9 @@ class PokerHand
   private
 
   def handle_complex_tie(other_hand)
-    return handle_complex_tie_with_nonrelevant_cards(other_hand) if %i[highcard pair].include? highest_hand_name
     return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
     return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
+    return handle_complex_tie_with_nonrelevant_cards(other_hand) if %i[highcard pair twopairs threeofakind fourofakind].include?(highest_hand_name) && (highest_hand_name == other_hand.highest_hand_name)
 
     'Tie'
   end
