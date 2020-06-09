@@ -62,19 +62,7 @@ class PokerHand
   def handle_complex_hands(other_hand)
     return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
     return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
-    return decision_within_sequence(other_hand) if other_hand.highest_hand_sequence.count == 5
-    return decision_needs_kicker(other_hand) if other_hand.highest_hand_sequence.count < 5
-    'Tie'
-  end
-
-  def decision_within_sequence(other_hand)
-    other = other_hand.highest_hand_sequence
-    highest_hand_sequence.each_with_index do |card, index|
-      next if card.value == other[index].value
-      return 'Loss' if card.value < other[index].value
-      return 'Win' if card.value > other[index].value
-    end
-    'Tie'
+    return decision_needs_kicker(other_hand) if other_hand.highest_hand_sequence.count <= 5
   end
 
   def decision_needs_kicker(other_hand)
@@ -85,7 +73,6 @@ class PokerHand
     end
     'Tie'
   end
-
 
   ## Helper methods identifying named hands ##
 
