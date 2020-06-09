@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'byebug'
-require 'pry'
-
 class PokerCard
   CARD_SUIT_MAPPING = { "S": :spades, "H": :hearts, "D": :diamonds, "C": :clubs }.freeze
   TEN = 10
@@ -222,12 +219,3 @@ class PokerHand
     end.sort_by(&:value).reverse
   end
 end
-
-# Execute my Game here:
-
-# MY_HAND    = '7C 7H 7D 7S 8C'
-MY_HAND    = 'TC JC QC KC AC'
-THEIR_HAND = '2C 2D 2H 6C 5D'
-
-ph = PokerHand.new(MY_HAND)
-puts ph.compare_with(PokerHand.new(THEIR_HAND))
