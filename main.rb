@@ -43,28 +43,49 @@ class PokerHand
 
   def initialize(my_hand_string)
     @my_hand = representation_of(my_hand_string)
-    @highest = identify_suit
+    @highest_hand_name, @highest_hand_sequence = identify_suit
   end
 
   def compare_with(other_hand)
-    my_highest = RANK.find_index(highest)
-    puts "My #{highest} vs. Their #{other_hand.highest}"
-    their_highest = RANK.find_index(other_hand.highest)
-    return 'Loss' if my_highest < their_highest
-    return 'Tie' if  my_highest == their_highest
-    return 'Win' if  my_highest > their_highest
+    my_highest_hand_name = RANK.find_index(highest_hand_name)
+    puts "My #{highest_hand_name} vs. Their #{other_hand.highest_hand_name}"
+    their_highest_hand_name = RANK.find_index(other_hand.highest_hand_name)
+    return 'Loss' if my_highest_hand_name < their_highest_hand_name
+    return 'Win' if  my_highest_hand_name > their_highest_hand_name
+    handle_complex_tie(other_hand)
   end
 
   protected
 
-  attr_reader :my_hand, :highest
+  attr_reader :my_hand, :highest_hand_name, :highest_hand_sequence
 
   private
+
+  def handle_complex_tie(other_hand)
+    if [:highcard, :pair].include? highest_hand_name
+      return handle_complex_tie_with_nonrelevant_cards(other_hand)
+    end
+    return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
+    return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
+    return 'Tie'
+  end
+
+  def handle_complex_tie_with_nonrelevant_cards(other_hand)
+    my_remaining = my_hand - highest_hand_sequence
+    other_remaining = other_hand.my_hand - other_hand.highest_hand_sequence
+
+    my_remaining.each_with_index do |card,index|
+      next if card.value == other_remaining[index].value
+      return 'Loss' if card.value < other_remaining[index].value
+      return 'Win' if card.value > other_remaining[index].value
+    end
+    return 'Tie'
+  end
 
   ## Helper methods identifying named hands ##
 
   def flush
-    my_hand.group_by(&:suit).select { |_, hand_of_suit| hand_of_suit.count == 5 }
+    my_hand.group_by(&:suit).select { |_, hand_of_suit| hand_of_suit.count == 5 }.values.flatten
   end
 
   def straight
@@ -93,21 +114,32 @@ class PokerHand
 
   ## booleans figuring showing a named hand is there
 
+  def royalflush
+    return my_hand if royalflush?
+
+    []
+  end
+
   def royalflush?
     straight? && flush? && my_hand.last.value == PokerCard::TEN
   end
 
+  def straightflush
+    return my_hand if straightflush?
+    [] 
+  end
   def straightflush?
     straight? && flush?
   end
 
-  def fourofakind?
-    !of_a_kind(4).empty?
+  def fourofakind
+    of_a_kind(4).flatten
   end
 
-  def threeofakind
-    of_a_kind(3).flatten
+  def fourofakind?
+    !fourofakind.empty?
   end
+
 
   def fullhouse
     remaining_cards = my_hand - threeofakind
@@ -126,6 +158,10 @@ class PokerHand
 
   def straight?
     straight.any?
+  end
+
+  def threeofakind
+    of_a_kind(3).flatten
   end
 
   def threeofakind?
@@ -157,17 +193,13 @@ class PokerHand
   end
 
   def identify_suit
-    return :royalflush if royalflush?
-    return :straightflush if straightflush?
-    return :fourofakind if fourofakind?
-    return :fullhouse if fullhouse?
-    return :flush if flush?
-    return :straight if straight?
-    return :threeofakind if threeofakind?
-    return :twopairs if twopairs?
-    return :pair if pair?
+    RANK.drop(1).reverse.each do |rank|
+      if instance_eval("#{rank.to_s}?")
+        return rank, instance_eval(rank.to_s)
+      end
+    end
 
-    :highcard
+    return :highcard, [my_hand.first]
   end
 
   def representation_of(hand_string)
