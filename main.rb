@@ -46,8 +46,7 @@ class PokerHand
     @highest = identify_suit
   end
 
-  def compare_with(other_hand_string)
-    other_hand = PokerHand.new(other_hand_string)
+  def compare_with(other_hand)
     my_highest = RANK.find_index(highest)
     puts "My #{highest} vs. Their #{other_hand.highest}"
     their_highest = RANK.find_index(other_hand.highest)
@@ -191,4 +190,4 @@ MY_HAND    = 'TC JC QC KC AC'
 THEIR_HAND = '2C 2D 2H 6C 5D'
 
 ph = PokerHand.new(MY_HAND)
-puts ph.compare_with(THEIR_HAND)
+puts ph.compare_with(PokerHand.new(THEIR_HAND))
