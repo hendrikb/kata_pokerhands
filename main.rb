@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Represents one card of a Poker game
 class PokerCard
   CARD_SUIT_MAPPING = { "S": :spades, "H": :hearts, "D": :diamonds, "C": :clubs }.freeze
   TEN = 10
@@ -24,17 +25,22 @@ class PokerCard
   end
 
   def self.map_value_from(character)
+    return map_value_from_named(character) if character =~ /^[TJQKA]$/
+    return character.to_i if (2..9).include?(character.to_i)
+
+    raise "Determining card value from character #{character} failed!"
+  end
+
+  def self.map_value_from_named(character)
     return TEN if character == 'T'
     return JOKER if character == 'J'
     return QUEEN if character == 'Q'
     return KING if character == 'K'
     return ACE if character == 'A'
-    return character.to_i if (2..9).include?(character.to_i)
-
-    raise "Determining card value from character #{character} failed!"
   end
 end
 
+# Holds information about winning Poker cards
 class PokerHand
   RANK = %i[highcard pair twopairs threeofakind straight flush fullhouse fourofakind straightflush royalflush].freeze
 
@@ -51,6 +57,10 @@ class PokerHand
     return 'Win' if  my_highest_hand_name > their_highest_hand_name
 
     handle_complex_hands(other_hand)
+  end
+
+  def self.of_a_kind(hand, number)
+    hand.group_by(&:value).select { |_, many_of_a_kind| many_of_a_kind.count == number }.values
   end
 
   protected
@@ -81,23 +91,17 @@ class PokerHand
   end
 
   def straight
-    sequence = [my_hand.first]
-    my_hand.each do |card|
-      next if card == sequence.first
-
-      if sequence.last.value == card.value + 1
-        sequence << card
+    largest_straight = [my_hand.first]
+    my_hand.drop(1).each do |card|
+      if largest_straight.last.value == card.value + 1
+        largest_straight << card
       else
-        sequence = [card]
+        largest_straight = [card]
       end
     end
-    return [] unless sequence.count == 5
+    return [] unless largest_straight.count == 5
 
-    sequence
-  end
-
-  def self.of_a_kind(hand, number)
-    hand.group_by(&:value).select { |_, many_of_a_kind| many_of_a_kind.count == number }.values
+    largest_straight
   end
 
   def of_a_kind(number)
