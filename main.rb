@@ -192,15 +192,23 @@ class PokerHand
     pair.any?
   end
 
+  def highcard
+    [my_hand.first]
+  end
+
+  def highcard?
+    true
+  end
+
   def identify_suit
-    RANK.drop(1).reverse.each do |rank|
+    RANK.reverse.each do |rank|
       if instance_eval("#{rank.to_s}?")
         return rank, instance_eval(rank.to_s)
       end
     end
-
-    return :highcard, [my_hand.first]
+    raise 'This should never happen as :highcard is always true!'
   end
+
 
   def representation_of(hand_string)
     hand_string.split(' ').map do |cardcode|
