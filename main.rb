@@ -49,6 +49,7 @@ class PokerHand
     their_highest_hand_name = RANK.find_index(other_hand.highest_hand_name)
     return 'Loss' if my_highest_hand_name < their_highest_hand_name
     return 'Win' if  my_highest_hand_name > their_highest_hand_name
+
     handle_complex_tie(other_hand)
   end
 
@@ -59,24 +60,23 @@ class PokerHand
   private
 
   def handle_complex_tie(other_hand)
-    if [:highcard, :pair].include? highest_hand_name
-      return handle_complex_tie_with_nonrelevant_cards(other_hand)
-    end
+    return handle_complex_tie_with_nonrelevant_cards(other_hand) if %i[highcard pair].include? highest_hand_name
     return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
     return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
-    return 'Tie'
+
+    'Tie'
   end
 
   def handle_complex_tie_with_nonrelevant_cards(other_hand)
     my_remaining = my_hand - highest_hand_sequence
     other_remaining = other_hand.my_hand - other_hand.highest_hand_sequence
 
-    my_remaining.each_with_index do |card,index|
+    my_remaining.each_with_index do |card, index|
       next if card.value == other_remaining[index].value
       return 'Loss' if card.value < other_remaining[index].value
       return 'Win' if card.value > other_remaining[index].value
     end
-    return 'Tie'
+    'Tie'
   end
 
   ## Helper methods identifying named hands ##
@@ -123,8 +123,10 @@ class PokerHand
 
   def straightflush
     return my_hand if straightflush?
-    [] 
+
+    []
   end
+
   def straightflush?
     straight? && flush?
   end
@@ -136,7 +138,6 @@ class PokerHand
   def fourofakind?
     !fourofakind.empty?
   end
-
 
   def fullhouse
     remaining_cards = my_hand - threeofakind
@@ -198,14 +199,13 @@ class PokerHand
   end
 
   def identify_suit
-    RANK.reverse.each do |rank|
-      if instance_eval("#{rank.to_s}?")
-        return rank, instance_eval(rank.to_s)
-      end
+    RANK.reverse.each do |rank_name|
+      relevant_hand_matched = instance_eval("#{rank_name}?", __FILE__, __LINE__)
+      relevant_hand = instance_eval(rank_name.to_s, __FILE__, __LINE__)
+      return rank_name, relevant_hand if relevant_hand_matched
     end
     raise 'This should never happen as :highcard is always true!'
   end
-
 
   def representation_of(hand_string)
     hand_string.split(' ').map do |cardcode|
