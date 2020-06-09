@@ -62,22 +62,30 @@ class PokerHand
   def handle_complex_hands(other_hand)
     return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
     return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
-    return handle_complex_hands_with_nonrelevant_cards(other_hand) if %i[highcard pair twopairs threeofakind fourofakind].include?(highest_hand_name) && (highest_hand_name == other_hand.highest_hand_name)
-
+    return decision_within_sequence(other_hand) if other_hand.highest_hand_sequence.count == 5
+    return decision_needs_kicker(other_hand) if other_hand.highest_hand_sequence.count < 5
     'Tie'
   end
 
-  def handle_complex_hands_with_nonrelevant_cards(other_hand)
-    my_remaining = my_hand - highest_hand_sequence
-    other_remaining = other_hand.my_hand - other_hand.highest_hand_sequence
-
-    my_remaining.each_with_index do |card, index|
-      next if card.value == other_remaining[index].value
-      return 'Loss' if card.value < other_remaining[index].value
-      return 'Win' if card.value > other_remaining[index].value
+  def decision_within_sequence(other_hand)
+    other = other_hand.highest_hand_sequence
+    highest_hand_sequence.each_with_index do |card, index|
+      next if card.value == other[index].value
+      return 'Loss' if card.value < other[index].value
+      return 'Win' if card.value > other[index].value
     end
     'Tie'
   end
+
+  def decision_needs_kicker(other_hand)
+    my_hand.each_with_index do |card, index|
+      next if card.value == other_hand.my_hand[index].value
+      return 'Loss' if card.value < other_hand.my_hand[index].value
+      return 'Win' if card.value > other_hand.my_hand[index].value
+    end
+    'Tie'
+  end
+
 
   ## Helper methods identifying named hands ##
 
