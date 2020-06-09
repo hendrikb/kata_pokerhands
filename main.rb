@@ -50,7 +50,7 @@ class PokerHand
     return 'Loss' if my_highest_hand_name < their_highest_hand_name
     return 'Win' if  my_highest_hand_name > their_highest_hand_name
 
-    handle_complex_tie(other_hand)
+    handle_complex_hands(other_hand)
   end
 
   protected
@@ -59,15 +59,15 @@ class PokerHand
 
   private
 
-  def handle_complex_tie(other_hand)
+  def handle_complex_hands(other_hand)
     return 'Loss' if highest_hand_sequence.first.value < other_hand.highest_hand_sequence.first.value
     return 'Win' if highest_hand_sequence.first.value > other_hand.highest_hand_sequence.first.value
-    return handle_complex_tie_with_nonrelevant_cards(other_hand) if %i[highcard pair twopairs threeofakind fourofakind].include?(highest_hand_name) && (highest_hand_name == other_hand.highest_hand_name)
+    return handle_complex_hands_with_nonrelevant_cards(other_hand) if %i[highcard pair twopairs threeofakind fourofakind].include?(highest_hand_name) && (highest_hand_name == other_hand.highest_hand_name)
 
     'Tie'
   end
 
-  def handle_complex_tie_with_nonrelevant_cards(other_hand)
+  def handle_complex_hands_with_nonrelevant_cards(other_hand)
     my_remaining = my_hand - highest_hand_sequence
     other_remaining = other_hand.my_hand - other_hand.highest_hand_sequence
 
